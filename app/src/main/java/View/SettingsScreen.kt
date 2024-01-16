@@ -7,16 +7,27 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,10 +45,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.trivialapp.R
+import viewModel.TriviaSettingsViewModel
+import kotlin.math.roundToInt
 
 
 @Composable
-fun SettingsScreen(navController: NavController) {
+fun SettingsScreen(navController: NavController, settingsViewModel: TriviaSettingsViewModel) {
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(id = R.drawable.background_settings),
@@ -55,16 +68,17 @@ fun SettingsScreen(navController: NavController) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = "Difficulty", modifier = Modifier
-                .fillMaxWidth(0.4f)
-                .padding(start = 10.dp),
+            Text(
+                text = "Difficulty", modifier = Modifier
+                    .fillMaxWidth(0.4f)
+                    .padding(start = 10.dp),
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
             )
 
-            var selectedDifficulty by remember { mutableStateOf("Easy") }
             var expanded by remember { mutableStateOf(false) }
+
 
             Box(
                 modifier = Modifier
@@ -73,7 +87,7 @@ fun SettingsScreen(navController: NavController) {
                     .background(color = Color.Gray)
             ) {
                 Text(
-                    text = selectedDifficulty,
+                    text = settingsViewModel.difficulty,
                     color = Color.White,
                     modifier = Modifier
                         .padding(16.dp)
@@ -99,39 +113,40 @@ fun SettingsScreen(navController: NavController) {
                             text = { Text(text = difficulty, color = Color.White) },
                             onClick = {
                                 expanded = false
-                                selectedDifficulty = difficulty
+                                settingsViewModel.modifyDifficulty(difficulty)
                             })
                     }
                 }
             }
         }
+        Spacer(modifier = Modifier.fillMaxHeight(0.025f))
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = "Rounds", modifier = Modifier
-                .fillMaxWidth(0.4f)
-                .padding(start = 10.dp),
+            Text(
+                text = "Rounds", modifier = Modifier
+                    .fillMaxWidth(0.4f)
+                    .padding(start = 10.dp),
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
             )
 
-            var selectedOption by rememberSaveable { mutableStateOf("5") } // Valor inicial
             Text(text = "5")
             RadioButton(
-                selected = selectedOption == "5", 
-                onClick = { selectedOption = "5" }, 
+                selected = settingsViewModel.rounds == 5,
+                onClick = { settingsViewModel.modifyRounds(5) },
                 colors = RadioButtonDefaults.colors(
-                    selectedColor = Color.Gray, 
-                    unselectedColor = Color.White 
+                    selectedColor = Color.Gray,
+                    unselectedColor = Color.White
                 )
             )
             Text(text = "10")
 
             RadioButton(
-                selected = selectedOption == "10",
-                onClick = { selectedOption = "10" },
+                selected = settingsViewModel.rounds == 10,
+                onClick = { settingsViewModel.modifyRounds(10) },
                 colors = RadioButtonDefaults.colors(
                     selectedColor = Color.Gray,
                     unselectedColor = Color.White
@@ -141,13 +156,85 @@ fun SettingsScreen(navController: NavController) {
             Text(text = "15")
 
             RadioButton(
-                selected = selectedOption == "15",
-                onClick = { selectedOption = "15" },
+                selected = settingsViewModel.rounds == 15,
+                onClick = { settingsViewModel.modifyRounds(15) },
                 colors = RadioButtonDefaults.colors(
                     selectedColor = Color.Gray,
                     unselectedColor = Color.White
                 )
             )
+
+        }
+        Spacer(modifier = Modifier.fillMaxHeight(0.025f))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "Time (${settingsViewModel.time.roundToInt()}s)", modifier = Modifier
+                    .fillMaxWidth(0.4f)
+                    .padding(start = 10.dp),
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.9f)
+            ) {
+
+                Slider(
+                    value =  settingsViewModel.time,
+                    onValueChange = { newValue ->
+                        settingsViewModel.modifyTime(newValue)
+                    },
+                    valueRange = 5f..15f,
+                    colors = SliderDefaults.colors(
+                        thumbColor = Color.Gray,
+                        activeTrackColor = Color.LightGray,
+                        inactiveTrackColor = Color.White
+                    )
+                )
+            }
+        }
+        Spacer(modifier = Modifier.fillMaxHeight(0.025f))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "Dark mode", modifier = Modifier
+                    .fillMaxWidth(0.4f)
+                    .padding(start = 10.dp),
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.9f)
+            ) {
+                Switch(
+                    checked = settingsViewModel.darkMode,
+                    onCheckedChange = { settingsViewModel.modifyDarkMode(!settingsViewModel.darkMode) },
+                    colors = SwitchDefaults.colors(
+                        uncheckedThumbColor = Color.LightGray,
+                        checkedThumbColor = Color.Gray,
+                        uncheckedTrackColor = Color.White,
+                        checkedTrackColor = Color.DarkGray
+                    )
+                )
+            }
+        }
+        Spacer(modifier = Modifier.fillMaxHeight(0.05f))
+        Button(onClick = { navController.navigate(Routes.MenuScreen.route) },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Gray,
+                contentColor = Color.White),
+            modifier = Modifier
+                .fillMaxWidth(0.9f)
+                .height(50.dp),) {
+            Text(text = "Back to menu")
 
         }
     }

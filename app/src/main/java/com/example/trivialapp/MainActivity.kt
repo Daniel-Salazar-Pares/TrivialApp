@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
                     ) {
                         composable(Routes.LaunchScreen.route) { LaunchScreen(navigationController) }
                         composable(Routes.MenuScreen.route) { MenuScreen(navigationController, settingsViewModel)}
-                        composable(Routes.SettingsScreen.route) { SettingsScreen(navigationController) }
+                        composable(Routes.SettingsScreen.route) { SettingsScreen(navigationController, settingsViewModel) }
                         composable(Routes.GameScreen.route) { GameScreen(navigationController) }
                         composable(Routes.ResultScreen.route) { ResultScreen(navigationController) }
                     }

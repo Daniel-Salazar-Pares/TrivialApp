@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -30,12 +31,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.trivialapp.R
+import viewModel.TriviaSettingsViewModel
+
 
 @Composable
-fun MenuScreen(navController: NavController, settingsViewModel: ViewModel) {
+fun MenuScreen(navController: NavController, settingsViewModel: TriviaSettingsViewModel) {
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(id = R.drawable.menu_background),
@@ -52,7 +54,7 @@ fun MenuScreen(navController: NavController, settingsViewModel: ViewModel) {
     ){
         Image(painter = painterResource(id = R.drawable.trivia_logo), contentDescription = "Logo")
         Spacer(modifier = Modifier.height(15.dp))
-        var selectedTopic by remember { mutableStateOf("History") }
+
         var expanded by remember { mutableStateOf(false) }
         Box(
             modifier = Modifier
@@ -61,11 +63,11 @@ fun MenuScreen(navController: NavController, settingsViewModel: ViewModel) {
                 .background(color = Color.Gray)
         ) {
             Text(
-                text = selectedTopic,
+                text = settingsViewModel.selectedTopic,
                 color = Color.White,
                 modifier = Modifier
                     .padding(16.dp)
-                    .align(Alignment.CenterStart) // Align left
+                    .align(Alignment.CenterStart)
             )
             Icon(
                 Icons.Default.ArrowDropDown, "Dropdown Icon", Modifier
@@ -85,12 +87,12 @@ fun MenuScreen(navController: NavController, settingsViewModel: ViewModel) {
                 listOf("History", "Tecnology", "Cinema and Games", "Mitology", "All").forEach { topic ->
                     DropdownMenuItem(text = { Text(text = topic, color = Color.White,) }, onClick = {
                         expanded = false
-                        selectedTopic = topic
+                        settingsViewModel.modifyTopic(topic)
                     })
                 }
             }
         }
-        Spacer(modifier = Modifier.height(15.dp))
+        Spacer(modifier = Modifier.fillMaxHeight(0.02f))
         Button(onClick = { /*TODO*/ },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Gray,
@@ -101,7 +103,7 @@ fun MenuScreen(navController: NavController, settingsViewModel: ViewModel) {
             Text(text = "New game")
 
         }
-        Spacer(modifier = Modifier.height(15.dp))
+        Spacer(modifier = Modifier.fillMaxHeight(0.02f))
         Button(onClick = { navController.navigate(Routes.SettingsScreen.route) },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Gray,
