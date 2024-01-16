@@ -1,4 +1,4 @@
-package com.example.trivialapp
+package View
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -22,6 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.trivialapp.R
 import kotlinx.coroutines.delay
 
 @Composable

@@ -1,4 +1,4 @@
-package com.example.trivialapp
+package View
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
